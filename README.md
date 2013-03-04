@@ -1,0 +1,4 @@
+easymine
+========
+
+A little game.
