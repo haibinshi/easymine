@@ -1,0 +1,46 @@
+#!/bin/sh
+
+cat >sdl.c <<EOF
+#include <SDL.h>
+int main() {
+  SDL_Init(SDL_INIT_VIDEO);
+  return 0;
+}
+EOF
+
+CFLAGS=`sdl-config --cflags`
+LIBS=`sdl-config --libs`
+gcc -o sdl $CFLAGS $LIBS sdl.c >/dev/null 2>&1
+ret=$?
+rm -f sdl sdl.c
+if [ $ret -ne 0 ]; then
+  echo "Error: missing SDL_devel"
+  exit 1
+fi
+
+cat >Makefile <<EOF
+CC=gcc
+CFLAGS=$CFLAGS
+CFLAGS+=-fomit-frame-pointer -O2 -pipe -W -Wall
+LIBS=$LIBS
+BIN=easymine
+OBJS=graphic.o control.o main.o
+
+all: \${BIN}
+
+\${BIN}: \${OBJS}
+	\${CC} -o \${BIN} -s \${CFLAGS} \${LIBS} \${OBJS}
+
+graphic.o: graphic.h
+
+control.o: control.h graphic.h matrix.h
+
+main.o: graphic.h control.h version.h
+
+clean:
+	rm -f \${OBJS} \${BIN}
+
+.PHONY: clean
+EOF
+
+echo "OK, then type 'make'"
