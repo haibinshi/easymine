@@ -36,7 +36,7 @@
 		fputs("Out of memory.\n", stderr); \
 		exit(EXIT_FAILURE); \
 	}    \
-	*(size_t *)__mem = h;     \
+	*(size_t *)__mem = __h;     \
 	__mem = (type *)((size_t *)__mem + 1); \
 })
 
